@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canteen OS - Admin Dashboard</title>
+  <style>
+    :root {
+      --bg-color: #fbf9f5;
+      --card-bg: #ffffff;
+      --text-dark: #2d3748;
+      --border-color: #edf2f7;
+      --btn-dark: #333333;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Top Navigation Bar */
+    .navbar {
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 30px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .navbar-brand {
+      font-weight: 600;
+      font-size: 14px;
+      color: #4a5568;
+    }
+    .live-clock-badge {
+      font-size: 12px;
+      background: #edf2f7;
+      color: #2d3748;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+      border: 1px solid #cbd5e0;
+    }
+    .btn-logout-nav {
+      background: transparent;
+      border: 1px solid #cbd5e0;
+      padding: 5px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #4a5568;
+      font-weight: 500;
+    }
+    .btn-logout-nav:hover {
+      background: #f7fafc;
+      color: #e53e3e;
+      border-color: #fca5a5;
+    }
+
+    /* Auth Screen */
+    #auth-screen {
+      max-width: 380px;
+      margin: 100px auto;
+      padding: 30px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+    #auth-screen input {
+      width: 100%;
+      padding: 10px;
+      margin: 15px 0;
+      box-sizing: border-box;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+    }
+    #auth-screen button {
+      width: 100%;
+      padding: 10px;
+      background: var(--btn-dark);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* Dashboard Layout */
+    #dashboard-screen {
+      display: none;
+      max-width: 1100px;
+      margin: 20px auto 40px auto;
+      padding: 0 20px;
+    }
+
+    /* Banners & Headers */
+    .banner-images {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .banner-images img {
+      width: 20%;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .header-title-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .header-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .header-subtitle {
+      color: #718096;
+      font-size: 13px;
+      font-style: italic;
+    }
+
+    /* Alerts */
+    .alert-box {
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 10px;
+      display: none;
+    }
+    .alert-warning {
+      background-color: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+    .alert-danger {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    /* Section Headers */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 25px 0 10px 0;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .card-subtitle {
+      font-weight: 600;
+      margin-bottom: 15px;
+      font-size: 15px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      background-color: #f7fafc;
+      text-align: left;
+      padding: 10px;
+      color: #718096;
+      font-weight: 600;
+    }
+    td {
+      padding: 12px 10px;
+      border-top: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    .item-img-thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      object-fit: cover;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    /* Badges */
+    .badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-good { background: #def7ec; color: #03543f; }
+    .badge-expired { background: #fde8e8; color: #9b1c1c; }
+
+    /* Form Fields */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group label {
+      font-size: 12px;
+      color: #4a5568;
+      margin-bottom: 5px;
+    }
+    .form-group input, .form-group select {
+      padding: 8px;
+      border: 1px solid #cbd5e0;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    /* Action Buttons */
+    .btn {
+      padding: 6px 12px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .btn-edit {
+      background-color: #e2e8f0;
+      color: #2d3748;
+      margin-right: 5px;
+      font-weight: 500;
+    }
+    .btn-edit:hover { background-color: #cbd5e0; }
+
+    .btn-terminate { background-color: #fee2e2; color: #991b1b; }
+    .btn-terminate:hover { background-color: #fca5a5; }
+
+    .btn-reset { background-color: #fee2e2; color: #991b1b; font-weight: 600; }
+    .btn-reset:hover { background-color: #fca5a5; }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--btn-dark);
+      color: white;
+      padding: 10px;
+      margin-top: 15px;
+      font-weight: 600;
+    }
+    .btn-submit:hover { background-color: #000; }
+
+    .action-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .btn-reactivate {
+      background-color: var(--btn-dark);
+      color: white;
+      width: 140px;
+      text-align: center;
+    }
+    .btn-reactivate:hover { background-color: #000; }
+
+    .btn-delete-perm {
+      background-color: #fee2e2;
+      color: #991b1b;
+      width: 140px;
+      text-align: center;
+    }
+    .btn-delete-perm:hover { background-color: #fca5a5; }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-card {
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      width: 450px;
+      max-width: 90%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    .modal-header {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .btn-cancel {
+      background: #edf2f7;
+      color: #4a5568;
+    }
+    .btn-save {
+      background: var(--btn-dark);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <div class="navbar" id="topNavbar">
+    <div class="navbar-left">
+      <div class="navbar-brand">Canteen OS</div>
+      <div class="live-clock-badge" id="navClock">📅 2026-09-27 12:00:00 PM</div>
+    </div>
+    <button class="btn-logout-nav" onclick="logout()">Logout</button>
+  </div>
+
+  <!-- Password Lock Screen -->
+  <div id="auth-screen">
+    <h3>Admin Login</h3>
+    <input type="password" id="adminPassword" placeholder="Enter password">
+    <button onclick="verifyPassword()">Access Dashboard</button>
+    <p id="errorMsg" style="color: red; display: none; margin-top: 10px; font-size: 12px;">Incorrect Password</p>
+  </div>
+
+  <!-- Dashboard Screen -->
+  <div id="dashboard-screen">
+    <div class="banner-images">
+      <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=300&q=80" alt="Food 1">
+      <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=300&q=80" alt="Food 2">
+      <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=300&q=80" alt="Food 3">
+      <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=300&q=80" alt="Food 4">
+      <img src="https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=300&q=80" alt="Food 5">
+    </div>
+
+    <div class="header-title-container">
+      <div>
+        <div class="header-title">The Ultimate Canteen Hub</div>
+        <div class="header-subtitle">🍃 a healthy outside starts from the inside</div>
+      </div>
+    </div>
+
+    <!-- Alerts Container -->
+    <div id="alertsContainer">
+      <div id="lowStockAlert" class="alert-box alert-warning"></div>
+      <div id="expiryAlert" class="alert-box alert-danger"></div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">Admin Management & Inventory Control</div>
+      <button class="btn btn-reset" onclick="resetAllData()">Reset All System Data</button>
+    </div>
+
+    <!-- Active Inventory Table -->
+    <div class="card">
+      <div class="card-subtitle">📦 Active Inventory & Storage System</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock Level</th>
+            <th>Expiry Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="inventoryTable">
+          <tr>
+            <td class="item-name-cell">
+              <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="salad">
+              <span class="item-name">Kalderata</span>
+            </td>
+            <td class="item-cat">Rice Meal</td>
+            <td class="item-price-val" data-price="50">₱55.00</td>
+            <td class="item-stock-val" data-stock="20">20 pcs</td>
+            <td class="item-expiry-val" data-expiry="2026-09-26">2026-09-26</td>
+            <td class="status-cell"></td>
+            <td>
+              <button class="btn btn-edit" onclick="openEditModal(this)">Edit</button>
+              <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-name-cell">
+              <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="water">
+              <span class="item-name">Iced Americano</span>
+            </td>
+            <td class="item-cat">Beverages</td>
+            <td class="item-price-val" data-price="15">₱55.00</td>
+            <td class="item-stock-val" data-stock="59">59 pcs</td>
+            <td class="item-expiry-val" data-expiry="2026-12-31">2026-12-31</td>
+            <td class="status-cell"></td>
+            <td>
+              <button class="btn btn-edit" onclick="openEditModal(this)">Edit</button>
+              <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-name-cell">
+              <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="smoothie">
+              <span class="item-name">Iced Caramel Macchiatto</span>
+            </td>
+            <td class="item-cat">Beverages</td>
+            <td class="item-price-val" data-price="65">₱55.00</td>
+            <td class="item-stock-val" data-stock="24">24 pcs</td>
+            <td class="item-expiry-val" data-expiry="2026-09-28">2026-09-28</td>
+            <td class="status-cell"></td>
+            <td>
+              <button class="btn btn-edit" onclick="openEditModal(this)">Edit</button>
+              <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-name-cell">
+              <img src="https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="banana">
+              <span class="item-name">Iced Hazelnut</span>
+            </td>
+            <td class="item-cat">Beverages</td>
+            <td class="item-price-val" data-price="40">₱55.00</td>
+            <td class="item-stock-val" data-stock="40">40 pcs</td>
+            <td class="item-expiry-val" data-expiry="2026-09-30">2026-09-30</td>
+            <td class="status-cell"></td>
+            <td>
+              <button class="btn btn-edit" onclick="openEditModal(this)">Edit</button>
+              <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-name-cell">
+              <img src="https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="banana">
+              <span class="item-name">Iced Latte</span>
+            </td>
+            <td class="item-cat">Beverages</td>
+            <td class="item-price-val" data-price="40">₱55.00</td>
+            <td class="item-stock-val" data-stock="40">43 pcs</td>
+            <td class="item-expiry-val" data-expiry="2026-09-30">2026-09-30</td>
+            <td class="status-cell"></td>
+            <td>
+              <button class="btn btn-edit" onclick="openEditModal(this)">Edit</button>
+              <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Add Item Form -->
+    <div class="card">
+      <div class="card-subtitle">➕ Add New Canteen Item</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Item Name:</label>
+          <input type="text" id="newName" placeholder="e.g. Fresh ng mamamo blue">
+        </div>
+        <div class="form-group">
+          <label>Category:</label>
+          <select id="newCategory">
+            <option>Rice Meals</option>
+            <option>Beverages</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Price (₱):</label>
+          <input type="number" id="newPrice" value="50">
+        </div>
+        <div class="form-group">
+          <label>Stock Quantity:</label>
+          <input type="number" id="newStock" value="20">
+        </div>
+        <div class="form-group">
+          <label>Expiry Date:</label>
+          <input type="date" id="newExpiry">
+        </div>
+        <div class="form-group">
+          <label>Upload Item Image:</label>
+          <input type="file" id="newImage" accept="image/*">
+        </div>
+      </div>
+      <button class="btn btn-submit" onclick="addNewItem()">Upload & Add to Inventory</button>
+        </div>
+    <!-- Archive & Terminated Table -->
+    <div class="card">
+      <div class="card-subtitle">📁 Archive & Terminated Items History</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Category</th>
+            <th>Last Stock</th>
+            <th>Expiry Date</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="archiveTable">
+          <tr>
+            <td class="item-name-cell">
+              <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="pancake">
+              <span class="item-name">Banana Oat Pancakes</span>
+            </td>
+            <td class="item-cat">Breakfast</td>
+            <td class="item-stock-val" data-stock="18">18 pcs</td>
+            <td class="item-expiry-val" data-expiry="2026-09-25">2026-09-25</td>
+            <td>
+              <div class="action-cell">
+                <button class="btn btn-reactivate" onclick="reactivateItem(this)">Reactivate</button>
+                <button class="btn btn-delete-perm" onclick="deletePermanently(this)">Delete Permanently</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+              <!-- Daily Transactions & Sales Log Card -->
+    <div class="admin-card" style="background: #ffffff; border-radius: 8px; padding: 20px; border: 1px solid #edf2f7; margin-top: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="margin: 0; font-size: 15px; font-weight: bold; color: #2d3748;">💳 Daily Transactions & Sales Log</h3>
+        <div style="font-size: 14px; font-weight: bold; color: #2b6cb0;">
+          Total Daily Revenue: <span id="adminTotalSales">₱0.00</span>
+        </div>
+      </div>
+
+      <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+        <thead>
+          <tr style="text-align: left; background: #f7fafc; color: #4a5568; border-bottom: 1px solid #edf2f7;">
+            <th style="padding: 10px;">Order #</th>
+            <th style="padding: 10px;">Customer Name</th>
+            <th style="padding: 10px;">Items Purchased</th>
+            <th style="padding: 10px;">Total Amount</th>
+            <th style="padding: 10px;">Date & Time</th>
+          </tr>
+        </thead>
+        <tbody id="adminTransactionTable">
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- EDIT ITEM MODAL -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>✏️ Edit Active Inventory Item</span>
+        <button style="border:none; background:none; cursor:pointer; font-weight:bold;" onclick="closeEditModal()">✕</button>
+      </div>
+      <div class="form-grid" style="grid-template-columns: 1fr;">
+        <div class="form-group">
+          <label>Item Name:</label>
+          <input type="text" id="editName">
+        </div>
+        <div class="form-group">
+          <label>Category:</label>
+          <select id="editCategory">
+            <option>Breakfast</option>
+            <option>Lunch</option>
+            <option>Beverages</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Price (₱):</label>
+          <input type="number" id="editPrice">
+        </div>
+        <div class="form-group">
+          <label>Stock Quantity:</label>
+          <input type="number" id="editStock">
+        </div>
+        <div class="form-group">
+          <label>Expiry Date:</label>
+          <input type="date" id="editExpiry">
+        </div>
+        <div class="form-group">
+          <label>Update Picture:</label>
+          <input type="file" id="editImage" accept="image/*">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" onclick="closeEditModal()">Cancel</button>
+        <button class="btn btn-save" onclick="saveEditedItem()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_PASSWORD = "mamamoblue";
+    let activeEditingRow = null;
+
+    // Live Real-Time Date Clock
+    function startClock() {
+      function updateClock() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const timeStr = now.toLocaleTimeString();
+        document.getElementById('navClock').innerText = `📅 ${year}-${month}-${day} ${timeStr}`;
+      }
+      updateClock();
+      setInterval(updateClock, 1000);
+    }
+    startClock();
+
+    function verifyPassword() {
+      const input = document.getElementById('adminPassword').value;
+      if (input === ADMIN_PASSWORD) {
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('topNavbar').style.display = 'flex';
+        document.getElementById('dashboard-screen').style.display = 'block';
+        
+        evaluateInventoryRealtime();
+      } else {
+        document.getElementById('errorMsg').style.display = 'block';
+      }
+    }
+
+    function logout() {
+      document.getElementById('adminPassword').value = '';
+      document.getElementById('dashboard-screen').style.display = 'none';
+      document.getElementById('topNavbar').style.display = 'none';
+      document.getElementById('auth-screen').style.display = 'block';
+      document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    // Dynamic Real-Time Evaluator for Stock and Expiry Alerts
+    function evaluateInventoryRealtime() {
+      const rows = document.querySelectorAll('#inventoryTable tr');
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      let lowStockItems = [];
+      let expiredItems = [];
+
+      rows.forEach(row => {
+        const nameSpan = row.querySelector('.item-name');
+        const stockTd = row.querySelector('.item-stock-val');
+        const expiryTd = row.querySelector('.item-expiry-val');
+        const statusTd = row.querySelector('.status-cell');
+
+        if (!nameSpan || !stockTd || !expiryTd) return;
+
+        const name = nameSpan.innerText.trim();
+        const stock = parseInt(stockTd.getAttribute('data-stock'));
+        const expiryStr = expiryTd.getAttribute('data-expiry');
+        const expiryDate = new Date(expiryStr);
+        expiryDate.setHours(0, 0, 0, 0);
+
+        let isLowStock = stock <= 20;
+        let isExpired = expiryDate <= today;
+
+        if (isLowStock) {
+          stockTd.innerHTML = `<strong style="color: #c53030;" class="low-stock-flag">${stock} pcs (LOW)</strong>`;
+          lowStockItems.push(`${name} (${stock} pcs remaining)`);
+        } else {
+          stockTd.innerHTML = `${stock} pcs`;
+        }
+
+        if (isExpired) {
+          statusTd.innerHTML = `<span class="badge badge-expired expired-flag">Needs Change / Expired</span>`;
+          expiredItems.push(`${name} (expired on ${expiryStr})`);
+        } else {
+          statusTd.innerHTML = `<span class="badge badge-good">Good</span>`;
+        }
+      });
+
+      const lowStockAlert = document.getElementById('lowStockAlert');
+      const expiryAlert = document.getElementById('expiryAlert');
+
+      if (lowStockItems.length > 0) {
+        lowStockAlert.style.display = 'block';
+        lowStockAlert.innerHTML = `⚠️ <strong>Low Stock Alert:</strong> ${lowStockItems.join(', ')} reached low stock limits today!`;
+      } else {
+        lowStockAlert.style.display = 'none';
+      }
+
+      if (expiredItems.length > 0) {
+        expiryAlert.style.display = 'block';
+        expiryAlert.innerHTML = `🚨 <strong>Expiry Alert:</strong> ${expiredItems.join(', ')}. Needs to change or terminate!`;
+      } else {
+        expiryAlert.style.display = 'none';
+      }
+    }
+
+    // Open Modal Pre-Populated with Selected Row Data
+    function openEditModal(btn) {
+      activeEditingRow = btn.closest('tr');
+
+      const name = activeEditingRow.querySelector('.item-name').innerText;
+      const cat = activeEditingRow.querySelector('.item-cat').innerText;
+      const price = activeEditingRow.querySelector('.item-price-val').getAttribute('data-price');
+      const stock = activeEditingRow.querySelector('.item-stock-val').getAttribute('data-stock');
+      const expiry = activeEditingRow.querySelector('.item-expiry-val').getAttribute('data-expiry');
+
+      document.getElementById('editName').value = name;
+      document.getElementById('editCategory').value = cat;
+      document.getElementById('editPrice').value = price;
+      document.getElementById('editStock').value = stock;
+      document.getElementById('editExpiry').value = expiry;
+      document.getElementById('editImage').value = '';
+
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+      activeEditingRow = null;
+    }
+
+    // Save Edited Fields and Recalculate Real-Time Alerts
+    function saveEditedItem() {
+      if (!activeEditingRow) return;
+
+      const newName = document.getElementById('editName').value;
+      const newCat = document.getElementById('editCategory').value;
+      const newPrice = parseFloat(document.getElementById('editPrice').value) || 0;
+      const newStock = parseInt(document.getElementById('editStock').value) || 0;
+      const newExpiry = document.getElementById('editExpiry').value;
+      const imageInput = document.getElementById('editImage');
+
+      if (!newName || !newExpiry) {
+        alert('Please complete the Item Name and Expiry Date fields!');
+        return;
+      }
+
+      activeEditingRow.querySelector('.item-name').innerText = newName;
+      activeEditingRow.querySelector('.item-cat').innerText = newCat;
+      
+      const priceTd = activeEditingRow.querySelector('.item-price-val');
+      priceTd.setAttribute('data-price', newPrice);
+      priceTd.innerText = `₱${newPrice.toFixed(2)}`;
+
+      const stockTd = activeEditingRow.querySelector('.item-stock-val');
+      stockTd.setAttribute('data-stock', newStock);
+
+      const expiryTd = activeEditingRow.querySelector('.item-expiry-val');
+      expiryTd.setAttribute('data-expiry', newExpiry);
+      expiryTd.innerText = newExpiry;
+
+      if (imageInput.files && imageInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          activeEditingRow.querySelector('.item-img-thumb').src = e.target.result;
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+      }
+
+      closeEditModal();
+      evaluateInventoryRealtime();
+    }
+
+    function terminateItem(btn) {
+      const row = btn.closest('tr');
+      const name = row.querySelector('.item-name').innerText;
+      const cat = row.querySelector('.item-cat').innerText;
+      const stockTd = row.querySelector('.item-stock-val');
+      const expiryTd = row.querySelector('.item-expiry-val');
+      const imgSrc = row.querySelector('.item-img-thumb').src;
+
+      const stockVal = stockTd.getAttribute('data-stock');
+      const expiryVal = expiryTd.getAttribute('data-expiry');
+      const stockText = stockTd.innerText;
+
+      row.remove();
+
+      const archiveTable = document.getElementById('archiveTable');
+      const newArchiveRow = document.createElement('tr');
+      newArchiveRow.innerHTML = `
+        <td class="item-name-cell">
+          <img src="${imgSrc}" class="item-img-thumb" alt="item">
+          <span class="item-name">${name}</span>
+        </td>
+        <td class="item-cat">${cat}</td>
+        <td class="item-stock-val" data-stock="${stockVal}">${stockText}</td>
+        <td class="item-expiry-val" data-expiry="${expiryVal}">${expiryVal}</td>
+        <td>
+          <div class="action-cell">
+            <button class="btn btn-reactivate" onclick="reactivateItem(this)">Reactivate</button>
+            <button class="btn btn-delete-perm" onclick="deletePermanently(this)">Delete Permanently</button>
+          </div>
+        </td>
+      `;
+      archiveTable.appendChild(newArchiveRow);
+
+      evaluateInventoryRealtime();
+    }
+
+    function reactivateItem(btn) {
+      const row = btn.closest('tr');
+      const name = row.querySelector('.item-name').innerText;
+      const cat = row.querySelector('.item-cat').innerText;
+      const stockTd = row.querySelector('.item-stock-val');
+      const expiryTd = row.querySelector('.item-expiry-val');
+      const imgSrc = row.querySelector('.item-img-thumb').src;
+
+      const stockVal = stockTd.getAttribute('data-stock');
+      const expiryVal = expiryTd.getAttribute('data-expiry');
+
+      row.remove();
+
+      const inventoryTable = document.getElementById('inventoryTable');
+      const newActiveRow = document.createElement('tr');
+      newActiveRow.innerHTML = `
+        <td class="item-name-cell">
+          <img src="${imgSrc}" class="item-img-thumb" alt="item">
+          <span class="item-name">${name}</span>
+        </td>
+        <td class="item-cat">${cat}</td>
+        <td class="item-price-val" data-price="50">₱50.00</td>
+        <td class="item-stock-val" data-stock="${stockVal}">${stockVal} pcs</td>
+        <td class="item-expiry-val" data-expiry="${expiryVal}">${expiryVal}</td>
+        <td class="status-cell"></td>
+        <td>
+          <button class="btn btn-edit" onclick="openEditModal(this)">Edit</button>
+          <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button>
+        </td>
+      `;
+      inventoryTable.appendChild(newActiveRow);
+
+      evaluateInventoryRealtime();
+    }
+
+    function deletePermanently(btn) {
+      if (confirm('Are you sure you want to permanently delete this item?')) {
+        btn.closest('tr').remove();
+      }
+    }
+
+    function addNewItem() {
+      const name = document.getElementById('newName').value;
+      const cat = document.getElementById('newCategory').value;
+      const price = parseFloat(document.getElementById('newPrice').value) || 0;
+      const stock = parseInt(document.getElementById('newStock').value) || 0;
+      const expiry = document.getElementById('newExpiry').value;
+      const imageInput = document.getElementById('newImage');
+
+      if (!name || !expiry) {
+        alert('Please fill in Item Name and Expiry Date!');
+        return;
+      }
+
+      let imgSrc = "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=80&q=80";
+
+      const createRow = (src) => {
+        const inventoryTable = document.getElementById('inventoryTable');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+          <td class="item-name-cell">
+            <img src="${src}" class="item-img-thumb" alt="item">
+            <span class="item-name">${name}</span>
+          </td>
+          <td class="item-cat">${cat}</td>
+          <td class="item-price-val" data-price="${price}">₱${price.toFixed(2)}</td>
+          <td class="item-stock-val" data-stock="${stock}">${stock} pcs</td>
+          <td class="item-expiry-val" data-expiry="${expiry}">${expiry}</td>
+          <td class="status-cell"></td>
+          <td>
+            <button class="btn btn-edit" onclick="openEditModal(this)">Edit</button>
+            <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button>
+          </td>
+        `;
+
+        inventoryTable.insertBefore(newRow, inventoryTable.firstChild);
+
+        document.getElementById('newName').value = '';
+        document.getElementById('newExpiry').value = '';
+
+        evaluateInventoryRealtime();
+        alert('Item added successfully!');
+      };
+
+      if (imageInput.files && imageInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          createRow(e.target.result);
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+      } else {
+        createRow(imgSrc);
+      }
+    }
+
+    function resetAllData() {
+      if (confirm('Are you sure you want to reset all inventory data?')) {
+        location.reload();
+      }
+    }
+    // Render Daily Transactions Table and Total Sales
+    function renderAdminTransactions() {
+      const transactions = JSON.parse(localStorage.getItem('dailyTransactions') || '[]');
+      const tableBody = document.getElementById('adminTransactionTable');
+      const totalSalesSpan = document.getElementById('adminTotalSales');
+
+      if (!tableBody || !totalSalesSpan) return;
+
+      tableBody.innerHTML = '';
+      let totalSales = 0;
+
+      if (transactions.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="padding: 15px; text-align: center; color: #a0aec0; font-style: italic;">
+              No transactions logged yet today.
+            </td>
+          </tr>`;
+        totalSalesSpan.innerText = '₱0.00';
+        return;
+      }
+
+      transactions.forEach(tx => {
+        totalSales += tx.total;
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid #edf2f7';
+        tr.innerHTML = `
+          <td style="padding: 10px; font-weight: bold;">#${tx.orderNumber}</td>
+          <td style="padding: 10px;">${tx.customerName}</td>
+          <td style="padding: 10px;">${tx.items.join(', ')}</td>
+          <td style="padding: 10px; font-weight: bold; color: #2f855a;">₱${tx.total.toFixed(2)}</td>
+          <td style="padding: 10px; color: #718096; font-size: 12px;">${tx.timestamp}</td>
+        `;
+        tableBody.appendChild(tr);
+      });
+
+      totalSalesSpan.innerText = `₱${totalSales.toFixed(2)}`;
+    }
+
+    // Automatically call function on load
+    document.addEventListener('DOMContentLoaded', renderAdminTransactions);
+        function accessDashboard() {
+  const passwordInput = document.getElementById('adminPassword').value;
+  
+  if (passwordInput === 'mamamoblue') { // Replace with your actual password check
+    document.getElementById('loginContainer').style.display = 'none';
+    document.getElementById('adminDashboardContainer').style.display = 'block';
+    
+    // Load and render transactions after successful password entry
+    renderAdminTransactions();
+  } else {
+    alert('Incorrect Password!');
+  }
+}
+
+// Render Daily Transactions
+function renderAdminTransactions() {
+  const transactions = JSON.parse(localStorage.getItem('dailyTransactions') || '[]');
+  const tableBody = document.getElementById('adminTransactionTable');
+  const totalSalesSpan = document.getElementById('adminTotalSales');
+
+  if (!tableBody || !totalSalesSpan) return;
+
+  tableBody.innerHTML = '';
+  let totalSales = 0;
+
+  if (transactions.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="5" style="padding: 15px; text-align: center; color: #a0aec0; font-style: italic;">
+          No transactions logged yet today.
+        </td>
+      </tr>`;
+    totalSalesSpan.innerText = '₱0.00';
+    return;
+  }
+
+  transactions.forEach(tx => {
+    totalSales += tx.total;
+    const tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid #edf2f7';
+    tr.innerHTML = `
+      <td style="padding: 10px; font-weight: bold;">#${tx.orderNumber}</td>
+      <td style="padding: 10px;">${tx.customerName}</td>
+      <td style="padding: 10px;">${tx.items.join(', ')}</td>
+      <td style="padding: 10px; font-weight: bold; color: #2f855a;">₱${tx.total.toFixed(2)}</td>
+      <td style="padding: 10px; color: #718096; font-size: 12px;">${tx.timestamp}</td>
+    `;
+    tableBody.appendChild(tr);
+  });
+
+  totalSalesSpan.innerText = `₱${totalSales.toFixed(2)}`;
+}
+  </script>
+</body>
+</html>
