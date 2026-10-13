@@ -1,4 +1,4 @@
-# Student-Canteen-Management
+# Student-Canteen-Management-with-server
 A case study for our IT108
 
 
