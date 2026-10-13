@@ -63,6 +63,12 @@
       border-radius: 8px;
     }
 
+    .banner-images img.banner-logo,
+    .banner-images img.banner-mascot {
+      object-fit: contain;
+      background-color: #ffffff;
+    }
+
     .header-title {
       font-size: 26px;
       font-weight: bold;
@@ -312,7 +318,6 @@
       font-style: italic;
       padding: 10px 0;
     }
-    /* css1: Numbered styles explain the menu's intended-use detail. */
     .item-card .item-stock { overflow-wrap: anywhere; }
   </style>
 </head>
@@ -325,11 +330,11 @@
 
   <div class="container">
     <div class="banner-images">
-      <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=300&q=80" alt="Food 1">
-      <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=300&q=80" alt="Food 2">
-      <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=300&q=80" alt="Food 3">
-      <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=300&q=80" alt="Food 4">
-      <img src="https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=300&q=80" alt="Food 5">
+      <img src="Images/img2.png" alt="College logo" class="banner-logo">
+      <img src="Images/clementine west       the seven year slip.jfif" alt="Food 2">
+      <img src="Images/b1859b3b12208ab8389fcccbabaac21e.jpg" alt="Food 3">
+      <img src="Images/download.jfif" alt="Food 4">
+      <img src="Images/img1.png" alt="Canteen mascot" class="banner-mascot">
     </div>
 
     <div class="header-title">The Ultimate Canteen Hub</div>
@@ -345,45 +350,6 @@
         <button class="filter-btn" onclick="filterCategory('Rice Meal', this)">🍳 Rice Meal</button>
         <button class="filter-btn" onclick="filterCategory('Beverages', this)">🥤 Beverages</button>
       </div>
-
-      <div>
-        <div class="section-heading">Available Today</div>
-        
-        <div class="menu-grid" id="menuGrid">
-          <div class="item-card" data-category="Beverages" data-id="1" data-price="15" data-stock="59" data-expiry="2026-12-31" data-name="Bottled Spring Water">
-            <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=300&q=80" alt="Bottled Spring Water">
-            <div class="item-details">
-              <div class="item-name">Bottled Spring Water</div>
-              <div class="badge-expiry badge-good">Exp: 2026-12-31</div>
-              <div class="item-stock">Stock left: <span class="stock-num">59</span> bottles</div>
-              <div class="item-price">₱15.00</div>
-              <button class="btn-add-tray" onclick="addToTray(1)">+ Add to Tray</button>
-            </div>
-          </div>
-
-          <div class="item-card" data-category="Rice Meal" data-id="2" data-price="65" data-stock="24" data-expiry="2026-09-28" data-name="Acai Smoothie Bowl">
-            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=300&q=80" alt="Acai Smoothie Bowl">
-            <div class="item-details">
-              <div class="item-name">Acai Smoothie Bowl</div>
-              <div class="badge-expiry badge-good">Exp: 2026-09-28</div>
-              <div class="item-stock">Stock left: <span class="stock-num">24</span> bowls</div>
-              <div class="item-price">₱65.00</div>
-              <button class="btn-add-tray" onclick="addToTray(2)">+ Add to Tray</button>
-            </div>
-          </div>
-
-          <div class="item-card" data-category="Rice Meal" data-id="3" data-price="65" data-stock="18" data-expiry="2026-09-25" data-name="Banana Oat Pancakes">
-            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=300&q=80" alt="Banana Oat Pancakes">
-            <div class="item-details">
-              <div class="item-name">Banana Oat Pancakes</div>
-              <div class="badge-expiry badge-expired">Expired (2026-09-25)</div>
-              <div class="item-stock" style="color: #c53030; font-weight: bold;">Stock left: <span class="stock-num">18</span> servings (LOW)</div>
-              <div class="item-price">₱65.00</div>
-              <button class="btn-add-tray btn-disabled" disabled>Unavailable</button>
-            </div>
-          </div>
-        </div>
-
         <div class="tray-card">
           <div class="tray-title">🛒 Your Order Tray (Numbering System)</div>
           
