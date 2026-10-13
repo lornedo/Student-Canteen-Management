@@ -114,6 +114,11 @@
       border-radius: 8px;
     }
 
+    .banner-images img.banner-logo,
+    .banner-images img.banner-mascot {
+      object-fit: contain;
+      background-color: #ffffff;
+    }
     .header-title-container {
       display: flex;
       justify-content: space-between;
@@ -345,11 +350,11 @@
 
   <div id="dashboard-screen">
     <div class="banner-images">
-      <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=300&q=80" alt="Food 1">
-      <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=300&q=80" alt="Food 2">
-      <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=300&q=80" alt="Food 3">
-      <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=300&q=80" alt="Food 4">
-      <img src="https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=300&q=80" alt="Food 5">
+      <img src="Images/img2.png" alt="College logo" class="banner-logo">
+      <img src="Images/clementine west       the seven year slip.jfif" alt="Food 2">
+      <img src="Images/b1859b3b12208ab8389fcccbabaac21e.jpg" alt="Food 3">
+      <img src="Images/download.jfif" alt="Food 4">
+      <img src="Images/img1.png" alt="Canteen mascot" class="banner-mascot">
     </div>
 
     <div class="header-title-container">
@@ -384,66 +389,6 @@
           </tr>
         </thead>
         <tbody id="inventoryTable">
-          <tr>
-            <td class="item-name-cell">
-              <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="salad">
-              <span class="item-name">mamamo salllad</span>
-            </td>
-            <td class="item-cat">Rice Meal</td>
-            <td class="item-price-val" data-price="50">₱50.00</td>
-            <td class="item-stock-val" data-stock="20" data-unit="servings">20 servings</td>
-            <td class="item-expiry-val" data-expiry="2026-09-26">2026-09-26</td>
-            <td class="status-cell"></td>
-            <td>
-              <button class="btn btn-edit" onclick="openEditModal(this)">Edit</button>
-              <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button>
-            </td>
-          </tr>
-          <tr>
-            <td class="item-name-cell">
-              <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="water">
-              <span class="item-name">Bottled Spring Water</span>
-            </td>
-            <td class="item-cat">Beverages</td>
-            <td class="item-price-val" data-price="15">₱15.00</td>
-            <td class="item-stock-val" data-stock="59" data-unit="bottles">59 bottles</td>
-            <td class="item-expiry-val" data-expiry="2026-12-31">2026-12-31</td>
-            <td class="status-cell"></td>
-            <td>
-              <button class="btn btn-edit" onclick="openEditModal(this)">Edit</button>
-              <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button>
-            </td>
-          </tr>
-          <tr>
-            <td class="item-name-cell">
-              <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="smoothie">
-              <span class="item-name">Acai Smoothie Bowl</span>
-            </td>
-            <td class="item-cat">Rice Meal</td>
-            <td class="item-price-val" data-price="65">₱65.00</td>
-            <td class="item-stock-val" data-stock="24" data-unit="bowls">24 bowls</td>
-            <td class="item-expiry-val" data-expiry="2026-09-28">2026-09-28</td>
-            <td class="status-cell"></td>
-            <td>
-              <button class="btn btn-edit" onclick="openEditModal(this)">Edit</button>
-              <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button>
-            </td>
-          </tr>
-          <tr>
-            <td class="item-name-cell">
-              <img src="https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="banana">
-              <span class="item-name">Banana MAMAMO</span>
-            </td>
-            <td class="item-cat">Rice Meal</td>
-            <td class="item-price-val" data-price="40">₱40.00</td>
-            <td class="item-stock-val" data-stock="40" data-unit="pcs">40 pcs</td>
-            <td class="item-expiry-val" data-expiry="2026-09-30">2026-09-30</td>
-            <td class="status-cell"></td>
-            <td>
-              <button class="btn btn-edit" onclick="openEditModal(this)">Edit</button>
-              <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button>
-            </td>
-          </tr>
         </tbody>
       </table>
     </div>
@@ -464,9 +409,7 @@
           <label>Category:</label>
           <select id="newCategory" onchange="handleNewCategoryChange()">
             <option>Rice Meal</option>
-            <option>Beverages</option>
-            
-            
+            <option>Beverages</option> 
           </select>
         </div>
         <div class="form-group">
@@ -505,21 +448,6 @@
           </tr>
         </thead>
         <tbody id="archiveTable">
-          <tr>
-            <td class="item-name-cell">
-              <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="pancake">
-              <span class="item-name">Banana Oat Pancakes</span>
-            </td>
-            <td class="item-cat">Rice Meal</td>
-            <td class="item-stock-val" data-stock="18" data-unit="servings">18 servings</td>
-            <td class="item-expiry-val" data-expiry="2026-09-25">2026-09-25</td>
-            <td>
-              <div class="action-cell">
-                <button class="btn btn-reactivate" onclick="reactivateItem(this)">Reactivate</button>
-                <button class="btn btn-delete-perm" onclick="deletePermanently(this)">Delete Permanently</button>
-              </div>
-            </td>
-          </tr>
         </tbody>
       </table>
     </div>
