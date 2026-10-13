@@ -21,7 +21,6 @@
       padding: 0;
     }
 
-    /* Top Navigation Bar */
     .navbar {
       display: none;
       justify-content: space-between;
@@ -49,6 +48,8 @@
       font-weight: 500;
       border: 1px solid #cbd5e0;
     }
+    /* css1: Keep the inventory purpose readable beneath each item name. */
+    .item-intended-use { display: block; margin-top: 3px; color: #718096; font-size: 11px; }
     .btn-logout-nav {
       background: transparent;
       border: 1px solid #cbd5e0;
@@ -65,7 +66,6 @@
       border-color: #fca5a5;
     }
 
-    /* Auth Screen */
     #auth-screen {
       max-width: 380px;
       margin: 100px auto;
@@ -95,7 +95,6 @@
       font-weight: bold;
     }
 
-    /* Dashboard Layout */
     #dashboard-screen {
       display: none;
       max-width: 1100px;
@@ -103,7 +102,6 @@
       padding: 0 20px;
     }
 
-    /* Banners & Headers */
     .banner-images {
       display: flex;
       gap: 12px;
@@ -133,7 +131,6 @@
       font-style: italic;
     }
 
-    /* Alerts */
     .alert-box {
       padding: 12px 16px;
       border-radius: 6px;
@@ -152,7 +149,6 @@
       border: 1px solid #fca5a5;
     }
 
-    /* Section Headers */
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -164,7 +160,6 @@
       font-weight: bold;
     }
 
-    /* Cards */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -179,7 +174,6 @@
       font-size: 15px;
     }
 
-    /* Tables */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -207,7 +201,6 @@
       vertical-align: middle;
     }
 
-    /* Badges */
     .badge {
       padding: 4px 8px;
       border-radius: 12px;
@@ -217,7 +210,6 @@
     .badge-good { background: #def7ec; color: #03543f; }
     .badge-expired { background: #fde8e8; color: #9b1c1c; }
 
-    /* Form Fields */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -239,7 +231,6 @@
       font-size: 13px;
     }
 
-    /* Action Buttons */
     .btn {
       padding: 6px 12px;
       border-radius: 4px;
@@ -293,7 +284,6 @@
     }
     .btn-delete-perm:hover { background-color: #fca5a5; }
 
-    /* Modal Overlay */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -338,7 +328,6 @@
 </head>
 <body>
 
-  <!-- Top Navigation Header -->
   <div class="navbar" id="topNavbar">
     <div class="navbar-left">
       <div class="navbar-brand">Canteen OS</div>
@@ -347,7 +336,6 @@
     <button class="btn-logout-nav" onclick="logout()">Logout</button>
   </div>
 
-  <!-- Password Lock Screen -->
   <div id="auth-screen">
     <h3>Admin Login</h3>
     <input type="password" id="adminPassword" placeholder="Enter password">
@@ -355,7 +343,6 @@
     <p id="errorMsg" style="color: red; display: none; margin-top: 10px; font-size: 12px;">Incorrect Password</p>
   </div>
 
-  <!-- Dashboard Screen -->
   <div id="dashboard-screen">
     <div class="banner-images">
       <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=300&q=80" alt="Food 1">
@@ -372,7 +359,6 @@
       </div>
     </div>
 
-    <!-- Alerts Container -->
     <div id="alertsContainer">
       <div id="lowStockAlert" class="alert-box alert-warning"></div>
       <div id="expiryAlert" class="alert-box alert-danger"></div>
@@ -383,7 +369,6 @@
       <button class="btn btn-reset" onclick="resetAllData()">Reset All System Data</button>
     </div>
 
-    <!-- Active Inventory Table -->
     <div class="card">
       <div class="card-subtitle">📦 Active Inventory & Storage System</div>
       <table>
@@ -402,11 +387,11 @@
           <tr>
             <td class="item-name-cell">
               <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="salad">
-              <span class="item-name">Kalderata</span>
+              <span class="item-name">mamamo salllad</span>
             </td>
             <td class="item-cat">Rice Meal</td>
-            <td class="item-price-val" data-price="50">₱55.00</td>
-            <td class="item-stock-val" data-stock="20">20 pcs</td>
+            <td class="item-price-val" data-price="50">₱50.00</td>
+            <td class="item-stock-val" data-stock="20" data-unit="servings">20 servings</td>
             <td class="item-expiry-val" data-expiry="2026-09-26">2026-09-26</td>
             <td class="status-cell"></td>
             <td>
@@ -417,11 +402,11 @@
           <tr>
             <td class="item-name-cell">
               <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="water">
-              <span class="item-name">Iced Americano</span>
+              <span class="item-name">Bottled Spring Water</span>
             </td>
             <td class="item-cat">Beverages</td>
-            <td class="item-price-val" data-price="15">₱55.00</td>
-            <td class="item-stock-val" data-stock="59">59 pcs</td>
+            <td class="item-price-val" data-price="15">₱15.00</td>
+            <td class="item-stock-val" data-stock="59" data-unit="bottles">59 bottles</td>
             <td class="item-expiry-val" data-expiry="2026-12-31">2026-12-31</td>
             <td class="status-cell"></td>
             <td>
@@ -432,11 +417,11 @@
           <tr>
             <td class="item-name-cell">
               <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="smoothie">
-              <span class="item-name">Iced Caramel Macchiatto</span>
+              <span class="item-name">Acai Smoothie Bowl</span>
             </td>
-            <td class="item-cat">Beverages</td>
-            <td class="item-price-val" data-price="65">₱55.00</td>
-            <td class="item-stock-val" data-stock="24">24 pcs</td>
+            <td class="item-cat">Rice Meal</td>
+            <td class="item-price-val" data-price="65">₱65.00</td>
+            <td class="item-stock-val" data-stock="24" data-unit="bowls">24 bowls</td>
             <td class="item-expiry-val" data-expiry="2026-09-28">2026-09-28</td>
             <td class="status-cell"></td>
             <td>
@@ -447,26 +432,11 @@
           <tr>
             <td class="item-name-cell">
               <img src="https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="banana">
-              <span class="item-name">Iced Hazelnut</span>
+              <span class="item-name">Banana MAMAMO</span>
             </td>
-            <td class="item-cat">Beverages</td>
-            <td class="item-price-val" data-price="40">₱55.00</td>
-            <td class="item-stock-val" data-stock="40">40 pcs</td>
-            <td class="item-expiry-val" data-expiry="2026-09-30">2026-09-30</td>
-            <td class="status-cell"></td>
-            <td>
-              <button class="btn btn-edit" onclick="openEditModal(this)">Edit</button>
-              <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button>
-            </td>
-          </tr>
-          <tr>
-            <td class="item-name-cell">
-              <img src="https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="banana">
-              <span class="item-name">Iced Latte</span>
-            </td>
-            <td class="item-cat">Beverages</td>
-            <td class="item-price-val" data-price="40">₱55.00</td>
-            <td class="item-stock-val" data-stock="40">43 pcs</td>
+            <td class="item-cat">Rice Meal</td>
+            <td class="item-price-val" data-price="40">₱40.00</td>
+            <td class="item-stock-val" data-stock="40" data-unit="pcs">40 pcs</td>
             <td class="item-expiry-val" data-expiry="2026-09-30">2026-09-30</td>
             <td class="status-cell"></td>
             <td>
@@ -478,19 +448,25 @@
       </table>
     </div>
 
-    <!-- Add Item Form -->
     <div class="card">
       <div class="card-subtitle">➕ Add New Canteen Item</div>
       <div class="form-grid">
         <div class="form-group">
           <label>Item Name:</label>
-          <input type="text" id="newName" placeholder="e.g. Fresh ng mamamo blue">
+          <input type="text" id="newName" placeholder="e.g. Chicken Adobo Rice">
+        </div>
+        <!-- html12: Capture why this product is stocked. -->
+        <div class="form-group">
+          <label>Intended Use:</label>
+          <input type="text" id="newIntendedUse" placeholder="e.g. Ready-to-drink beverage">
         </div>
         <div class="form-group">
           <label>Category:</label>
-          <select id="newCategory">
-            <option>Rice Meals</option>
+          <select id="newCategory" onchange="handleNewCategoryChange()">
+            <option>Rice Meal</option>
             <option>Beverages</option>
+            
+            
           </select>
         </div>
         <div class="form-group">
@@ -498,8 +474,12 @@
           <input type="number" id="newPrice" value="50">
         </div>
         <div class="form-group">
-          <label>Stock Quantity:</label>
-          <input type="number" id="newStock" value="20">
+          <label id="newStockLabel">Stock Quantity (Servings/Plates):</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="number" id="newStock" value="20" style="flex: 1.5;">
+            <select id="newUnit" style="flex: 1;">
+            </select>
+          </div>
         </div>
         <div class="form-group">
           <label>Expiry Date:</label>
@@ -511,8 +491,7 @@
         </div>
       </div>
       <button class="btn btn-submit" onclick="addNewItem()">Upload & Add to Inventory</button>
-        </div>
-    <!-- Archive & Terminated Table -->
+    </div>
     <div class="card">
       <div class="card-subtitle">📁 Archive & Terminated Items History</div>
       <table>
@@ -531,8 +510,8 @@
               <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=80&q=80" class="item-img-thumb" alt="pancake">
               <span class="item-name">Banana Oat Pancakes</span>
             </td>
-            <td class="item-cat">Breakfast</td>
-            <td class="item-stock-val" data-stock="18">18 pcs</td>
+            <td class="item-cat">Rice Meal</td>
+            <td class="item-stock-val" data-stock="18" data-unit="servings">18 servings</td>
             <td class="item-expiry-val" data-expiry="2026-09-25">2026-09-25</td>
             <td>
               <div class="action-cell">
@@ -544,7 +523,6 @@
         </tbody>
       </table>
     </div>
-              <!-- Daily Transactions & Sales Log Card -->
     <div class="admin-card" style="background: #ffffff; border-radius: 8px; padding: 20px; border: 1px solid #edf2f7; margin-top: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h3 style="margin: 0; font-size: 15px; font-weight: bold; color: #2d3748;">💳 Daily Transactions & Sales Log</h3>
@@ -568,7 +546,6 @@
       </table>
     </div>
   </div>
-  <!-- EDIT ITEM MODAL -->
   <div class="modal-overlay" id="editModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -580,12 +557,18 @@
           <label>Item Name:</label>
           <input type="text" id="editName">
         </div>
+        <!-- html13: Let the admin update the product purpose. -->
+        <div class="form-group">
+          <label>Intended Use:</label>
+          <input type="text" id="editIntendedUse">
+        </div>
         <div class="form-group">
           <label>Category:</label>
-          <select id="editCategory">
-            <option>Breakfast</option>
-            <option>Lunch</option>
+          <select id="editCategory" onchange="handleEditCategoryChange()">
+            <option>Rice Meal</option>
             <option>Beverages</option>
+            
+            
           </select>
         </div>
         <div class="form-group">
@@ -593,8 +576,12 @@
           <input type="number" id="editPrice">
         </div>
         <div class="form-group">
-          <label>Stock Quantity:</label>
-          <input type="number" id="editStock">
+          <label id="editStockLabel">Stock Quantity:</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="number" id="editStock" style="flex: 1.5;">
+            <select id="editUnit" style="flex: 1;">
+            </select>
+          </div>
         </div>
         <div class="form-group">
           <label>Expiry Date:</label>
@@ -613,10 +600,10 @@
   </div>
 
   <script>
-    const ADMIN_PASSWORD = "mamamoblue";
+    const ADMIN_PASSWORD = "admin123";
     let activeEditingRow = null;
 
-    // Live Real-Time Date Clock
+    // js1: Update the admin dashboard clock once each second.
     function startClock() {
       function updateClock() {
         const now = new Date();
@@ -631,6 +618,7 @@
     }
     startClock();
 
+    // js2: Check the admin password and reveal inventory controls.
     function verifyPassword() {
       const input = document.getElementById('adminPassword').value;
       if (input === ADMIN_PASSWORD) {
@@ -638,6 +626,7 @@
         document.getElementById('topNavbar').style.display = 'flex';
         document.getElementById('dashboard-screen').style.display = 'block';
         
+        handleNewCategoryChange();
         evaluateInventoryRealtime();
       } else {
         document.getElementById('errorMsg').style.display = 'block';
@@ -652,7 +641,81 @@
       document.getElementById('errorMsg').style.display = 'none';
     }
 
-    // Dynamic Real-Time Evaluator for Stock and Expiry Alerts
+    // js3: Match quantity units to the selected category.
+    const CATEGORY_UNITS = {
+      "Beverages": [
+        { value: "bottles", label: "Bottles (btls)" },
+        { value: "cans", label: "Cans" },
+        { value: "cups", label: "Cups" },
+        { value: "glasses", label: "Glasses" },
+        { value: "packs", label: "Packs / Cartons" }
+      ],
+      "Rice Meal": [
+        { value: "servings", label: "Servings" },
+        { value: "plates", label: "Plates" },
+        { value: "bowls", label: "Bowls" },
+        { value: "orders", label: "Orders" },
+        { value: "packs", label: "Packs / Boxes" },
+        { value: "pcs", label: "Pieces (pcs)" }
+      ]
+    };
+
+    function getUnitsForCategory(category) {
+      if (category === "Beverages") {
+        return CATEGORY_UNITS["Beverages"];
+      }
+      return CATEGORY_UNITS[category] || CATEGORY_UNITS["Rice Meal"];
+    }
+
+    function populateUnitSelect(selectElement, category, selectedValue = '') {
+      if (!selectElement) return;
+      const units = getUnitsForCategory(category);
+      selectElement.innerHTML = '';
+      units.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.value;
+        opt.textContent = u.label;
+        if (selectedValue && u.value.toLowerCase() === selectedValue.toLowerCase()) {
+          opt.selected = true;
+        }
+        selectElement.appendChild(opt);
+      });
+      if (!selectElement.value && units.length > 0) {
+        selectElement.value = units[0].value;
+      }
+    }
+
+    function handleNewCategoryChange() {
+      const cat = document.getElementById('newCategory').value;
+      const unitSelect = document.getElementById('newUnit');
+      const label = document.getElementById('newStockLabel');
+      
+      populateUnitSelect(unitSelect, cat);
+      if (label) {
+        if (cat === 'Beverages') {
+          label.innerText = 'Stock Quantity (Bottles/Cans/Cups):';
+        } else {
+          label.innerText = 'Stock Quantity (Servings/Plates/Pcs):';
+        }
+      }
+    }
+
+    function handleEditCategoryChange(preserveUnit = '') {
+      const cat = document.getElementById('editCategory').value;
+      const unitSelect = document.getElementById('editUnit');
+      const label = document.getElementById('editStockLabel');
+
+      populateUnitSelect(unitSelect, cat, preserveUnit);
+      if (label) {
+        if (cat === 'Beverages') {
+          label.innerText = 'Stock Quantity (Bottles/Cans/Cups):';
+        } else {
+          label.innerText = 'Stock Quantity (Servings/Plates/Pcs):';
+        }
+      }
+    }
+
+    // js4: Recalculate expiry and stock warnings after inventory changes.
     function evaluateInventoryRealtime() {
       const rows = document.querySelectorAll('#inventoryTable tr');
       const today = new Date();
@@ -666,11 +729,20 @@
         const stockTd = row.querySelector('.item-stock-val');
         const expiryTd = row.querySelector('.item-expiry-val');
         const statusTd = row.querySelector('.status-cell');
+        const catTd = row.querySelector('.item-cat');
 
         if (!nameSpan || !stockTd || !expiryTd) return;
 
         const name = nameSpan.innerText.trim();
         const stock = parseInt(stockTd.getAttribute('data-stock'));
+        const cat = catTd ? catTd.innerText.trim() : '';
+
+        let unit = stockTd.getAttribute('data-unit');
+        if (!unit) {
+          unit = (cat === 'Beverages') ? 'bottles' : 'pcs';
+          stockTd.setAttribute('data-unit', unit);
+        }
+
         const expiryStr = expiryTd.getAttribute('data-expiry');
         const expiryDate = new Date(expiryStr);
         expiryDate.setHours(0, 0, 0, 0);
@@ -679,10 +751,10 @@
         let isExpired = expiryDate <= today;
 
         if (isLowStock) {
-          stockTd.innerHTML = `<strong style="color: #c53030;" class="low-stock-flag">${stock} pcs (LOW)</strong>`;
-          lowStockItems.push(`${name} (${stock} pcs remaining)`);
+          stockTd.innerHTML = `<strong style="color: #c53030;" class="low-stock-flag">${stock} ${unit} (LOW)</strong>`;
+          lowStockItems.push(`${name} (${stock} ${unit} remaining)`);
         } else {
-          stockTd.innerHTML = `${stock} pcs`;
+          stockTd.innerHTML = `${stock} ${unit}`;
         }
 
         if (isExpired) {
@@ -711,22 +783,25 @@
       }
     }
 
-    // Open Modal Pre-Populated with Selected Row Data
     function openEditModal(btn) {
       activeEditingRow = btn.closest('tr');
 
-      const name = activeEditingRow.querySelector('.item-name').innerText;
-      const cat = activeEditingRow.querySelector('.item-cat').innerText;
+      const name = activeEditingRow.querySelector('.item-name').innerText.trim();
+      const cat = activeEditingRow.querySelector('.item-cat').innerText.trim();
       const price = activeEditingRow.querySelector('.item-price-val').getAttribute('data-price');
       const stock = activeEditingRow.querySelector('.item-stock-val').getAttribute('data-stock');
+      const unit = activeEditingRow.querySelector('.item-stock-val').getAttribute('data-unit') || (cat === 'Beverages' ? 'bottles' : 'servings');
       const expiry = activeEditingRow.querySelector('.item-expiry-val').getAttribute('data-expiry');
 
       document.getElementById('editName').value = name;
+      document.getElementById('editIntendedUse').value = activeEditingRow.dataset.intendedUse || activeEditingRow.querySelector('.item-intended-use')?.innerText || '';
       document.getElementById('editCategory').value = cat;
       document.getElementById('editPrice').value = price;
       document.getElementById('editStock').value = stock;
       document.getElementById('editExpiry').value = expiry;
       document.getElementById('editImage').value = '';
+
+      handleEditCategoryChange(unit);
 
       document.getElementById('editModal').style.display = 'flex';
     }
@@ -736,23 +811,28 @@
       activeEditingRow = null;
     }
 
-    // Save Edited Fields and Recalculate Real-Time Alerts
     function saveEditedItem() {
       if (!activeEditingRow) return;
 
-      const newName = document.getElementById('editName').value;
+      const newName = document.getElementById('editName').value.trim();
+      const newIntendedUse = document.getElementById('editIntendedUse').value.trim();
       const newCat = document.getElementById('editCategory').value;
       const newPrice = parseFloat(document.getElementById('editPrice').value) || 0;
       const newStock = parseInt(document.getElementById('editStock').value) || 0;
+      const newUnit = document.getElementById('editUnit').value;
       const newExpiry = document.getElementById('editExpiry').value;
       const imageInput = document.getElementById('editImage');
 
-      if (!newName || !newExpiry) {
-        alert('Please complete the Item Name and Expiry Date fields!');
+      if (!newName || !newIntendedUse || !newExpiry) {
+        alert('Please complete the Item Name, Intended Use, and Expiry Date fields!');
         return;
       }
 
       activeEditingRow.querySelector('.item-name').innerText = newName;
+      activeEditingRow.dataset.intendedUse = newIntendedUse;
+      let useLabel = activeEditingRow.querySelector('.item-intended-use');
+      if (!useLabel) { useLabel = document.createElement('small'); useLabel.className = 'item-intended-use'; activeEditingRow.querySelector('.item-name-cell').appendChild(useLabel); }
+      useLabel.innerText = newIntendedUse;
       activeEditingRow.querySelector('.item-cat').innerText = newCat;
       
       const priceTd = activeEditingRow.querySelector('.item-price-val');
@@ -761,6 +841,7 @@
 
       const stockTd = activeEditingRow.querySelector('.item-stock-val');
       stockTd.setAttribute('data-stock', newStock);
+      stockTd.setAttribute('data-unit', newUnit);
 
       const expiryTd = activeEditingRow.querySelector('.item-expiry-val');
       expiryTd.setAttribute('data-expiry', newExpiry);
@@ -785,8 +866,11 @@
       const stockTd = row.querySelector('.item-stock-val');
       const expiryTd = row.querySelector('.item-expiry-val');
       const imgSrc = row.querySelector('.item-img-thumb').src;
+      const price = row.querySelector('.item-price-val')?.getAttribute('data-price') || '0';
+      const intendedUse = row.dataset.intendedUse || row.querySelector('.item-intended-use')?.innerText || '';
 
       const stockVal = stockTd.getAttribute('data-stock');
+      const unitVal = stockTd.getAttribute('data-unit') || (cat === 'Beverages' ? 'bottles' : 'pcs');
       const expiryVal = expiryTd.getAttribute('data-expiry');
       const stockText = stockTd.innerText;
 
@@ -794,13 +878,17 @@
 
       const archiveTable = document.getElementById('archiveTable');
       const newArchiveRow = document.createElement('tr');
+      newArchiveRow.dataset.itemId = row.dataset.itemId || Date.now();
+      newArchiveRow.dataset.price = price;
+      newArchiveRow.dataset.intendedUse = intendedUse;
       newArchiveRow.innerHTML = `
         <td class="item-name-cell">
           <img src="${imgSrc}" class="item-img-thumb" alt="item">
           <span class="item-name">${name}</span>
+          <small class="item-intended-use">${intendedUse}</small>
         </td>
         <td class="item-cat">${cat}</td>
-        <td class="item-stock-val" data-stock="${stockVal}">${stockText}</td>
+        <td class="item-stock-val" data-stock="${stockVal}" data-unit="${unitVal}">${stockText}</td>
         <td class="item-expiry-val" data-expiry="${expiryVal}">${expiryVal}</td>
         <td>
           <div class="action-cell">
@@ -821,22 +909,29 @@
       const stockTd = row.querySelector('.item-stock-val');
       const expiryTd = row.querySelector('.item-expiry-val');
       const imgSrc = row.querySelector('.item-img-thumb').src;
+      const price = row.dataset.price || '0';
+      const intendedUse = row.dataset.intendedUse || row.querySelector('.item-intended-use')?.innerText || '';
+      const itemId = row.dataset.itemId || Date.now();
 
       const stockVal = stockTd.getAttribute('data-stock');
+      const unitVal = stockTd.getAttribute('data-unit') || (cat === 'Beverages' ? 'bottles' : 'pcs');
       const expiryVal = expiryTd.getAttribute('data-expiry');
 
       row.remove();
 
       const inventoryTable = document.getElementById('inventoryTable');
       const newActiveRow = document.createElement('tr');
+      newActiveRow.dataset.itemId = itemId;
+      newActiveRow.dataset.intendedUse = intendedUse;
       newActiveRow.innerHTML = `
         <td class="item-name-cell">
           <img src="${imgSrc}" class="item-img-thumb" alt="item">
           <span class="item-name">${name}</span>
+          <small class="item-intended-use">${intendedUse}</small>
         </td>
         <td class="item-cat">${cat}</td>
-        <td class="item-price-val" data-price="50">₱50.00</td>
-        <td class="item-stock-val" data-stock="${stockVal}">${stockVal} pcs</td>
+        <td class="item-price-val" data-price="${price}">₱${parseFloat(price).toFixed(2)}</td>
+        <td class="item-stock-val" data-stock="${stockVal}" data-unit="${unitVal}">${stockVal} ${unitVal}</td>
         <td class="item-expiry-val" data-expiry="${expiryVal}">${expiryVal}</td>
         <td class="status-cell"></td>
         <td>
@@ -855,32 +950,40 @@
       }
     }
 
+    // js5: Add a product and its intended-use description to the inventory.
     function addNewItem() {
-      const name = document.getElementById('newName').value;
+      const name = document.getElementById('newName').value.trim();
+      const intendedUse = document.getElementById('newIntendedUse').value.trim();
       const cat = document.getElementById('newCategory').value;
       const price = parseFloat(document.getElementById('newPrice').value) || 0;
       const stock = parseInt(document.getElementById('newStock').value) || 0;
+      const unit = document.getElementById('newUnit').value || (cat === 'Beverages' ? 'bottles' : 'servings');
       const expiry = document.getElementById('newExpiry').value;
       const imageInput = document.getElementById('newImage');
 
-      if (!name || !expiry) {
-        alert('Please fill in Item Name and Expiry Date!');
+      if (!name || !intendedUse || !expiry) {
+        alert('Please fill in Item Name, Intended Use, and Expiry Date!');
         return;
       }
+
+      const escapeInventoryText = (value) => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 
       let imgSrc = "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=80&q=80";
 
       const createRow = (src) => {
         const inventoryTable = document.getElementById('inventoryTable');
         const newRow = document.createElement('tr');
+        newRow.dataset.itemId = Date.now();
+        newRow.dataset.intendedUse = intendedUse;
         newRow.innerHTML = `
           <td class="item-name-cell">
             <img src="${src}" class="item-img-thumb" alt="item">
-            <span class="item-name">${name}</span>
+            <span class="item-name">${escapeInventoryText(name)}</span>
+            <small class="item-intended-use">${escapeInventoryText(intendedUse)}</small>
           </td>
           <td class="item-cat">${cat}</td>
           <td class="item-price-val" data-price="${price}">₱${price.toFixed(2)}</td>
-          <td class="item-stock-val" data-stock="${stock}">${stock} pcs</td>
+          <td class="item-stock-val" data-stock="${stock}" data-unit="${unit}">${stock} ${unit}</td>
           <td class="item-expiry-val" data-expiry="${expiry}">${expiry}</td>
           <td class="status-cell"></td>
           <td>
@@ -892,6 +995,7 @@
         inventoryTable.insertBefore(newRow, inventoryTable.firstChild);
 
         document.getElementById('newName').value = '';
+        document.getElementById('newIntendedUse').value = '';
         document.getElementById('newExpiry').value = '';
 
         evaluateInventoryRealtime();
@@ -914,7 +1018,7 @@
         location.reload();
       }
     }
-    // Render Daily Transactions Table and Total Sales
+    // js6: Show orders shared by the customer page and calculate sales.
     function renderAdminTransactions() {
       const transactions = JSON.parse(localStorage.getItem('dailyTransactions') || '[]');
       const tableBody = document.getElementById('adminTransactionTable');
@@ -953,23 +1057,23 @@
       totalSalesSpan.innerText = `₱${totalSales.toFixed(2)}`;
     }
 
-    // Automatically call function on load
-    document.addEventListener('DOMContentLoaded', renderAdminTransactions);
+    document.addEventListener('DOMContentLoaded', () => {
+      handleNewCategoryChange();
+      renderAdminTransactions();
+    });
         function accessDashboard() {
   const passwordInput = document.getElementById('adminPassword').value;
   
-  if (passwordInput === 'mamamoblue') { // Replace with your actual password check
+  if (passwordInput === 'admin123') {
     document.getElementById('loginContainer').style.display = 'none';
     document.getElementById('adminDashboardContainer').style.display = 'block';
     
-    // Load and render transactions after successful password entry
     renderAdminTransactions();
   } else {
     alert('Incorrect Password!');
   }
 }
 
-// Render Daily Transactions
 function renderAdminTransactions() {
   const transactions = JSON.parse(localStorage.getItem('dailyTransactions') || '[]');
   const tableBody = document.getElementById('adminTransactionTable');
@@ -1008,5 +1112,7 @@ function renderAdminTransactions() {
   totalSalesSpan.innerText = `₱${totalSales.toFixed(2)}`;
 }
   </script>
+  <!-- html14: Numbered shared live-sync code keeps admin inventory, archive, and order logs in step. -->
+  <script src="shared-sync.js"></script>
 </body>
 </html>
