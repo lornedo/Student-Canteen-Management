@@ -21,6 +21,8 @@
       padding: 0;
     }
 
+    [hidden] { display: none !important; }
+
     .navbar {
       display: none;
       justify-content: space-between;
@@ -173,6 +175,9 @@
       margin-bottom: 25px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
+    .inventory-controls { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 8px; }
+    .inventory-controls input, .inventory-controls select { min-width: 160px; flex: 1; padding: 9px 10px; border: 1px solid var(--border-color); border-radius: 6px; background: #fff; color: var(--text-dark); font: inherit; }
+    .inventory-results { min-height: 18px; margin: 0 0 12px; color: #718096; font-size: 12px; }
     .card-subtitle {
       font-weight: 600;
       margin-bottom: 15px;
@@ -201,7 +206,9 @@
       width: 36px;
       height: 36px;
       border-radius: 6px;
-      object-fit: cover;
+      object-fit: contain;
+      object-position: center;
+      background: #f8fafc;
       margin-right: 8px;
       vertical-align: middle;
     }
@@ -343,7 +350,7 @@
 
   <div id="auth-screen">
     <h3>Admin Login</h3>
-    <input type="password" id="adminPassword" placeholder="Enter password">
+    <label for="adminPassword"></label><input type="password" id="adminPassword" placeholder="Enter password" autocomplete="current-password">
     <button onclick="verifyPassword()">Access Dashboard</button>
     <p id="errorMsg" style="color: red; display: none; margin-top: 10px; font-size: 12px;">Incorrect Password</p>
   </div>
@@ -371,11 +378,27 @@
 
     <div class="section-header">
       <div class="section-title">Admin Management & Inventory Control</div>
-      <button class="btn btn-reset" onclick="resetAllData()">Reset All System Data</button>
     </div>
 
     <div class="card">
-      <div class="card-subtitle">📦 Active Inventory & Storage System</div>
+      <div class="card-subtitle" style="display:flex;justify-content:space-between;align-items:center;gap:12px;">📦 Active Inventory & Storage System <button class="btn btn-reset" onclick="resetInventoryData()">Reset Inventory</button></div>
+      <div class="inventory-controls">
+        <input id="inventorySearch" type="search" aria-label="Search inventory" placeholder="Search item name or description" oninput="applyInventoryControls()">
+        <select id="inventoryCategoryFilter" aria-label="Filter inventory by category" onchange="applyInventoryControls()">
+          <option value="All">All categories</option>
+          <option value="Rice Meal">Rice Meal</option>
+          <option value="Beverages">Beverages</option>
+        </select>
+        <select id="inventorySort" aria-label="Sort inventory" onchange="applyInventoryControls()">
+          <option value="name-asc">Name (A–Z)</option>
+          <option value="name-desc">Name (Z–A)</option>
+          <option value="price-asc">Price (low to high)</option>
+          <option value="price-desc">Price (high to low)</option>
+          <option value="stock-asc">Stock (low to high)</option>
+          <option value="expiry-asc">Expiry (soonest first)</option>
+        </select>
+      </div>
+      <p id="inventoryResults" class="inventory-results" role="status" aria-live="polite">No items yet. Add a food or beverage below.</p>
       <table>
         <thead>
           <tr>
@@ -394,46 +417,46 @@
     </div>
 
     <div class="card">
-      <div class="card-subtitle">➕ Add New Canteen Item</div>
+      <div class="card-subtitle">➕ Add New Item</div>
       <div class="form-grid">
         <div class="form-group">
-          <label>Item Name:</label>
-          <input type="text" id="newName" placeholder="e.g. Chicken Adobo Rice">
+          <label for="newName">Item Name:</label>
+          <input type="text" id="newName" placeholder="e.g. Chicken Adobo Rice" maxlength="120" required>
         </div>
         <!-- html12: Capture why this product is stocked. -->
         <div class="form-group">
-          <label>Intended Use:</label>
-          <input type="text" id="newIntendedUse" placeholder="e.g. Ready-to-drink beverage">
+          <label for="newIntendedUse">Description (ingredients and allergens):</label>
+          <input type="text" id="newIntendedUse" placeholder="e.g. Ingredients: rice, chicken. Allergens: soy" maxlength="300" required>
         </div>
         <div class="form-group">
-          <label>Category:</label>
+          <label for="newCategory">Category:</label>
           <select id="newCategory" onchange="handleNewCategoryChange()">
             <option>Rice Meal</option>
             <option>Beverages</option> 
           </select>
         </div>
         <div class="form-group">
-          <label>Price (₱):</label>
-          <input type="number" id="newPrice" value="50">
+          <label for="newPrice">Price (₱):</label>
+          <input type="number" id="newPrice" value="50" min="0" max="1000000" step="0.01" required>
         </div>
         <div class="form-group">
-          <label id="newStockLabel">Stock Quantity (Servings/Plates):</label>
+          <label id="newStockLabel" for="newStock">Stock Quantity (Servings/Plates):</label>
           <div style="display: flex; gap: 8px;">
-            <input type="number" id="newStock" value="20" style="flex: 1.5;">
+            <input type="number" id="newStock" value="20" min="0" max="1000000" step="1" required style="flex: 1.5;">
             <select id="newUnit" style="flex: 1;">
             </select>
           </div>
         </div>
         <div class="form-group">
-          <label>Expiry Date:</label>
-          <input type="date" id="newExpiry">
+          <label for="newExpiry">Expiry Date:</label>
+          <input type="date" id="newExpiry" required>
         </div>
         <div class="form-group">
-          <label>Upload Item Image:</label>
+          <label for="newImage">Upload Item Image:</label>
           <input type="file" id="newImage" accept="image/*">
         </div>
       </div>
-      <button class="btn btn-submit" onclick="addNewItem()">Upload & Add to Inventory</button>
+      <button id="addItemButton" class="btn btn-submit" onclick="addNewItem()">Upload & Add to Inventory</button>
     </div>
     <div class="card">
       <div class="card-subtitle">📁 Archive & Terminated Items History</div>
@@ -453,9 +476,10 @@
     </div>
     <div class="admin-card" style="background: #ffffff; border-radius: 8px; padding: 20px; border: 1px solid #edf2f7; margin-top: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h3 style="margin: 0; font-size: 15px; font-weight: bold; color: #2d3748;">💳 Daily Transactions & Sales Log</h3>
+        <h3 style="margin: 0; font-size: 15px; font-weight: bold; color: #2d3748;">💳 Monthly Transactions & Sales Log</h3>
+        <button class="btn btn-reset" onclick="resetMonthlyTransactions()">Reset This Month&apos;s Transactions</button>
         <div style="font-size: 14px; font-weight: bold; color: #2b6cb0;">
-          Total Daily Revenue: <span id="adminTotalSales">₱0.00</span>
+          Total This Month Revenue: <span id="adminTotalSales">₱0.00</span>
         </div>
       </div>
 
@@ -467,6 +491,7 @@
             <th style="padding: 10px;">Items Purchased</th>
             <th style="padding: 10px;">Total Amount</th>
             <th style="padding: 10px;">Date & Time</th>
+            <th style="padding: 10px;">Action</th>
           </tr>
         </thead>
         <tbody id="adminTransactionTable">
@@ -482,16 +507,16 @@
       </div>
       <div class="form-grid" style="grid-template-columns: 1fr;">
         <div class="form-group">
-          <label>Item Name:</label>
-          <input type="text" id="editName">
+          <label for="editName">Item Name:</label>
+          <input type="text" id="editName" maxlength="120" required>
         </div>
         <!-- html13: Let the admin update the product purpose. -->
         <div class="form-group">
-          <label>Intended Use:</label>
-          <input type="text" id="editIntendedUse">
+          <label for="editIntendedUse">Description (ingredients and allergens):</label>
+          <input type="text" id="editIntendedUse" placeholder="List ingredients and any allergens" maxlength="300" required>
         </div>
         <div class="form-group">
-          <label>Category:</label>
+          <label for="editCategory">Category:</label>
           <select id="editCategory" onchange="handleEditCategoryChange()">
             <option>Rice Meal</option>
             <option>Beverages</option>
@@ -500,23 +525,23 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Price (₱):</label>
-          <input type="number" id="editPrice">
+          <label for="editPrice">Price (₱):</label>
+          <input type="number" id="editPrice" min="0" max="1000000" step="0.01" required>
         </div>
         <div class="form-group">
-          <label id="editStockLabel">Stock Quantity:</label>
+          <label id="editStockLabel" for="editStock">Stock Quantity:</label>
           <div style="display: flex; gap: 8px;">
-            <input type="number" id="editStock" style="flex: 1.5;">
+            <input type="number" id="editStock" min="0" max="1000000" step="1" required style="flex: 1.5;">
             <select id="editUnit" style="flex: 1;">
             </select>
           </div>
         </div>
         <div class="form-group">
-          <label>Expiry Date:</label>
-          <input type="date" id="editExpiry">
+          <label for="editExpiry">Expiry Date:</label>
+          <input type="date" id="editExpiry" required>
         </div>
         <div class="form-group">
-          <label>Update Picture:</label>
+          <label for="editImage">Update Picture:</label>
           <input type="file" id="editImage" accept="image/*">
         </div>
       </div>
@@ -527,6 +552,7 @@
     </div>
   </div>
 
+  <script src="inventory-utils.js"></script>
   <script>
     const ADMIN_PASSWORD = "admin123";
     let activeEditingRow = null;
@@ -711,6 +737,30 @@
       }
     }
 
+    // js4a: Search, filter, and sort active inventory rows.
+    function applyInventoryControls() {
+      const table = document.getElementById('inventoryTable');
+      if (!table) return;
+      const query = document.getElementById('inventorySearch')?.value || '';
+      const category = document.getElementById('inventoryCategoryFilter')?.value || 'All';
+      const sort = document.getElementById('inventorySort')?.value || 'name-asc';
+      const rows = [...table.querySelectorAll('tr')];
+      const records = rows.map(row => ({
+        row,
+        name: row.querySelector('.item-name')?.textContent.trim() || '',
+        intendedUse: row.querySelector('.item-intended-use')?.textContent.trim() || '',
+        category: row.querySelector('.item-cat')?.textContent.trim() || '',
+        price: Number(row.querySelector('.item-price-val')?.dataset.price || 0),
+        stock: Number(row.querySelector('.item-stock-val')?.dataset.stock || 0),
+        expiry: row.querySelector('.item-expiry-val')?.dataset.expiry || ''
+      }));
+      const shown = window.CanteenUtils.filterAndSort(records, { query, category, sort });
+      const visibleRows = new Set(shown.map(record => record.row));
+      rows.forEach(row => { row.hidden = !visibleRows.has(row); });
+      shown.forEach(record => table.appendChild(record.row));
+      const result = document.getElementById('inventoryResults');
+      if (result) result.textContent = rows.length ? `${shown.length} of ${rows.length} items shown` : 'No items yet. Add a food or beverage below.';
+    }
     function openEditModal(btn) {
       activeEditingRow = btn.closest('tr');
 
@@ -739,52 +789,87 @@
       activeEditingRow = null;
     }
 
-    function saveEditedItem() {
-      if (!activeEditingRow) return;
-
+    async function saveEditedItem() {
+      if (!activeEditingRow) return false;
+      const rowBeingEdited = activeEditingRow;
       const newName = document.getElementById('editName').value.trim();
       const newIntendedUse = document.getElementById('editIntendedUse').value.trim();
       const newCat = document.getElementById('editCategory').value;
-      const newPrice = parseFloat(document.getElementById('editPrice').value) || 0;
-      const newStock = parseInt(document.getElementById('editStock').value) || 0;
+      const newPriceInput = document.getElementById('editPrice').value;
+      const newPrice = Number(newPriceInput);
+      const newStockInput = document.getElementById('editStock').value;
+      const newStock = Number(newStockInput);
       const newUnit = document.getElementById('editUnit').value;
       const newExpiry = document.getElementById('editExpiry').value;
       const imageInput = document.getElementById('editImage');
+      const imageFile = imageInput.files?.[0] || null;
 
-      if (!newName || !newIntendedUse || !newExpiry) {
-        alert('Please complete the Item Name, Intended Use, and Expiry Date fields!');
-        return;
+      if (!newName || newName.length > 120 || !newIntendedUse || newIntendedUse.length > 300 || !newExpiry || newPriceInput === '' || newStockInput === '' || !Number.isFinite(newPrice) || newPrice < 0 || !Number.isSafeInteger(newStock) || newStock < 0 || !['Rice Meal', 'Beverages'].includes(newCat)) {
+        alert('Enter a name, description, valid category, non-negative price and whole-number stock, and expiry date.');
+        return false;
+      }
+      if (imageFile && (!imageFile.type.startsWith('image/') || imageFile.size > 5 * 1024 * 1024)) {
+        alert('Choose an image file smaller than 5 MB.');
+        return false;
       }
 
-      activeEditingRow.querySelector('.item-name').innerText = newName;
-      activeEditingRow.dataset.intendedUse = newIntendedUse;
-      let useLabel = activeEditingRow.querySelector('.item-intended-use');
-      if (!useLabel) { useLabel = document.createElement('small'); useLabel.className = 'item-intended-use'; activeEditingRow.querySelector('.item-name-cell').appendChild(useLabel); }
-      useLabel.innerText = newIntendedUse;
-      activeEditingRow.querySelector('.item-cat').innerText = newCat;
-      
-      const priceTd = activeEditingRow.querySelector('.item-price-val');
-      priceTd.setAttribute('data-price', newPrice);
-      priceTd.innerText = `₱${newPrice.toFixed(2)}`;
-
-      const stockTd = activeEditingRow.querySelector('.item-stock-val');
-      stockTd.setAttribute('data-stock', newStock);
-      stockTd.setAttribute('data-unit', newUnit);
-
-      const expiryTd = activeEditingRow.querySelector('.item-expiry-val');
-      expiryTd.setAttribute('data-expiry', newExpiry);
-      expiryTd.innerText = newExpiry;
-
-      if (imageInput.files && imageInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          activeEditingRow.querySelector('.item-img-thumb').src = e.target.result;
-        };
-        reader.readAsDataURL(imageInput.files[0]);
+      let newImageData = null;
+      if (imageFile) {
+        try {
+          newImageData = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result));
+            reader.onerror = () => reject(new Error('Could not read the selected image.'));
+            reader.readAsDataURL(imageFile);
+          });
+        } catch (error) {
+          alert(error.message || 'Could not read the selected image.');
+          return false;
+        }
       }
 
+      rowBeingEdited.querySelector('.item-name').textContent = newName;
+      rowBeingEdited.dataset.intendedUse = newIntendedUse;
+      let useLabel = rowBeingEdited.querySelector('.item-intended-use');
+      if (!useLabel) { useLabel = document.createElement('small'); useLabel.className = 'item-intended-use'; rowBeingEdited.querySelector('.item-name-cell').appendChild(useLabel); }
+      useLabel.textContent = newIntendedUse;
+      rowBeingEdited.querySelector('.item-cat').textContent = newCat;
+
+      const priceTd = rowBeingEdited.querySelector('.item-price-val');
+      priceTd.dataset.price = String(newPrice);
+      priceTd.textContent = `₱${newPrice.toFixed(2)}`;
+
+      const stockTd = rowBeingEdited.querySelector('.item-stock-val');
+      stockTd.dataset.stock = String(newStock);
+      stockTd.dataset.unit = newUnit;
+      stockTd.textContent = `${newStock} ${newUnit}`;
+
+      const expiryTd = rowBeingEdited.querySelector('.item-expiry-val');
+      expiryTd.dataset.expiry = newExpiry;
+      expiryTd.textContent = newExpiry;
+
+      if (newImageData) rowBeingEdited.querySelector('.item-img-thumb').src = newImageData;
+
+      const itemId = Number(rowBeingEdited.dataset.itemId);
+      if (!Number.isSafeInteger(itemId)) {
+        alert('This inventory item has no valid ID. Reload the page and try again.');
+        return false;
+      }
+      const updatedItem = {
+        id: itemId,
+        name: newName,
+        intendedUse: newIntendedUse,
+        category: newCat,
+        price: newPrice,
+        stock: newStock,
+        unit: newUnit,
+        expiry: newExpiry,
+        image: rowBeingEdited.querySelector('.item-img-thumb')?.getAttribute('src') || ''
+      };
       closeEditModal();
       evaluateInventoryRealtime();
+      applyInventoryControls();
+      return updatedItem;
     }
 
     function terminateItem(btn) {
@@ -878,167 +963,158 @@
       }
     }
 
-    // js5: Add a product and its intended-use description to the inventory.
-    function addNewItem() {
+    // js5: Validate and build a product record; shared-sync confirms persistence before success.
+    async function addNewItem() {
       const name = document.getElementById('newName').value.trim();
       const intendedUse = document.getElementById('newIntendedUse').value.trim();
       const cat = document.getElementById('newCategory').value;
-      const price = parseFloat(document.getElementById('newPrice').value) || 0;
-      const stock = parseInt(document.getElementById('newStock').value) || 0;
+      const priceInput = document.getElementById('newPrice').value;
+      const price = Number(priceInput);
+      const stockInput = document.getElementById('newStock').value;
+      const stock = Number(stockInput);
       const unit = document.getElementById('newUnit').value || (cat === 'Beverages' ? 'bottles' : 'servings');
       const expiry = document.getElementById('newExpiry').value;
       const imageInput = document.getElementById('newImage');
+      const imageFile = imageInput.files && imageInput.files[0];
 
-      if (!name || !intendedUse || !expiry) {
-        alert('Please fill in Item Name, Intended Use, and Expiry Date!');
-        return;
+      if (!name || name.length > 120 || !intendedUse || intendedUse.length > 300 || !expiry || priceInput === '' || stockInput === '' || !Number.isFinite(price) || price < 0 || price > 1000000 || !Number.isSafeInteger(stock) || stock < 0 || stock > 1000000 || !['Rice Meal', 'Beverages'].includes(cat)) {
+        alert('Enter a name, description, valid category, non-negative price and whole-number stock, and expiry date.');
+        return false;
+      }
+      if (imageFile && (!imageFile.type.startsWith('image/') || imageFile.size > 5 * 1024 * 1024)) {
+        alert('Choose an image file smaller than 5 MB.');
+        return false;
       }
 
-      const escapeInventoryText = (value) => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
-
-      let imgSrc = "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=80&q=80";
-
-      const createRow = (src) => {
-        const inventoryTable = document.getElementById('inventoryTable');
-        const newRow = document.createElement('tr');
-        newRow.dataset.itemId = Date.now();
-        newRow.dataset.intendedUse = intendedUse;
-        newRow.innerHTML = `
-          <td class="item-name-cell">
-            <img src="${src}" class="item-img-thumb" alt="item">
-            <span class="item-name">${escapeInventoryText(name)}</span>
-            <small class="item-intended-use">${escapeInventoryText(intendedUse)}</small>
-          </td>
-          <td class="item-cat">${cat}</td>
-          <td class="item-price-val" data-price="${price}">₱${price.toFixed(2)}</td>
-          <td class="item-stock-val" data-stock="${stock}" data-unit="${unit}">${stock} ${unit}</td>
-          <td class="item-expiry-val" data-expiry="${expiry}">${expiry}</td>
-          <td class="status-cell"></td>
-          <td>
-            <button class="btn btn-edit" onclick="openEditModal(this)">Edit</button>
-            <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button>
-          </td>
-        `;
-
-        inventoryTable.insertBefore(newRow, inventoryTable.firstChild);
-
-        document.getElementById('newName').value = '';
-        document.getElementById('newIntendedUse').value = '';
-        document.getElementById('newExpiry').value = '';
-
-        evaluateInventoryRealtime();
-        alert('Item added successfully!');
-      };
-
-      if (imageInput.files && imageInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          createRow(e.target.result);
-        };
-        reader.readAsDataURL(imageInput.files[0]);
-      } else {
-        createRow(imgSrc);
+      let image = 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=80&q=80';
+      if (imageFile) {
+        try {
+          image = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result));
+            reader.onerror = () => reject(new Error('The selected image could not be read.'));
+            reader.readAsDataURL(imageFile);
+          });
+        } catch (error) {
+          alert(error.message || 'The selected image could not be read.');
+          return false;
+        }
       }
+
+      const existingIds = new Set([...document.querySelectorAll('#inventoryTable tr, #archiveTable tr')].map(row => Number(row.dataset.itemId)));
+      let id = Date.now();
+      while (existingIds.has(id)) id += 1;
+      const item = { id, name, intendedUse, category: cat, price, stock, unit, expiry, image };
+      const escapeInventoryText = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+      const row = document.createElement('tr');
+      row.dataset.itemId = String(id);
+      row.dataset.intendedUse = intendedUse;
+      row.innerHTML = `
+        <td class="item-name-cell"><img src="${escapeInventoryText(image)}" class="item-img-thumb" alt="item"><span class="item-name">${escapeInventoryText(name)}</span><small class="item-intended-use">${escapeInventoryText(intendedUse)}</small></td>
+        <td class="item-cat">${escapeInventoryText(cat)}</td>
+        <td class="item-price-val" data-price="${price}">₱${price.toFixed(2)}</td>
+        <td class="item-stock-val" data-stock="${stock}" data-unit="${escapeInventoryText(unit)}">${stock} ${escapeInventoryText(unit)}</td>
+        <td class="item-expiry-val" data-expiry="${escapeInventoryText(expiry)}">${escapeInventoryText(expiry)}</td>
+        <td class="status-cell"></td>
+        <td><button class="btn btn-edit" onclick="openEditModal(this)">Edit</button> <button class="btn btn-terminate" onclick="terminateItem(this)">Terminate Item</button></td>`;
+      document.getElementById('inventoryTable').insertBefore(row, document.getElementById('inventoryTable').firstChild);
+      evaluateInventoryRealtime();
+      applyInventoryControls();
+      return item;
     }
 
-    function resetAllData() {
-      if (confirm('Are you sure you want to reset all inventory data?')) {
-        location.reload();
-      }
+    // Use the server's Manila calendar month for the monthly transaction report.
+    function currentManilaMonthKey() {
+      const parts = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Manila", year: "numeric", month: "2-digit" }).formatToParts(new Date());
+      return parts.find(part => part.type === "year").value + "-" + parts.find(part => part.type === "month").value;
     }
-    // js6: Show orders shared by the customer page and calculate sales.
+    function transactionMonthKey(timestamp) {
+      const value = String(timestamp || "");
+      const iso = value.match(/^(\d{4})-(\d{2})/);
+      if (iso) return iso[1] + "-" + iso[2];
+      const slashDate = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if (slashDate) return slashDate[3] + "-" + slashDate[1].padStart(2, "0");
+      const parsed = new Date(value);
+      if (Number.isNaN(parsed.getTime())) return "";
+      const parts = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Manila", year: "numeric", month: "2-digit" }).formatToParts(parsed);
+      return parts.find(part => part.type === "year").value + "-" + parts.find(part => part.type === "month").value;
+    }
+    // Show this month's shared orders and calculate this month's sales.
     function renderAdminTransactions() {
-      const transactions = JSON.parse(localStorage.getItem('dailyTransactions') || '[]');
-      const tableBody = document.getElementById('adminTransactionTable');
-      const totalSalesSpan = document.getElementById('adminTotalSales');
-
+      let transactions = [];
+      try { transactions = JSON.parse(localStorage.getItem("dailyTransactions") || "[]"); } catch (_) {}
+      const month = currentManilaMonthKey();
+      transactions = transactions.filter(tx => transactionMonthKey(tx.timestamp) === month);
+      const tableBody = document.getElementById("adminTransactionTable");
+      const totalSalesSpan = document.getElementById("adminTotalSales");
       if (!tableBody || !totalSalesSpan) return;
-
-      tableBody.innerHTML = '';
+      tableBody.replaceChildren();
       let totalSales = 0;
-
-      if (transactions.length === 0) {
-        tableBody.innerHTML = `
-          <tr>
-            <td colspan="5" style="padding: 15px; text-align: center; color: #a0aec0; font-style: italic;">
-              No transactions logged yet today.
-            </td>
-          </tr>`;
-        totalSalesSpan.innerText = '₱0.00';
+      if (!transactions.length) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 6;
+        cell.textContent = "No transactions recorded for this month.";
+        cell.style.cssText = "padding: 15px; text-align: center; color: #a0aec0; font-style: italic;";
+        row.appendChild(cell);
+        tableBody.appendChild(row);
+        totalSalesSpan.textContent = "₱0.00";
         return;
       }
-
       transactions.forEach(tx => {
-        totalSales += tx.total;
-        const tr = document.createElement('tr');
-        tr.style.borderBottom = '1px solid #edf2f7';
-        tr.innerHTML = `
-          <td style="padding: 10px; font-weight: bold;">#${tx.orderNumber}</td>
-          <td style="padding: 10px;">${tx.customerName}</td>
-          <td style="padding: 10px;">${tx.items.join(', ')}</td>
-          <td style="padding: 10px; font-weight: bold; color: #2f855a;">₱${tx.total.toFixed(2)}</td>
-          <td style="padding: 10px; color: #718096; font-size: 12px;">${tx.timestamp}</td>
-        `;
-        tableBody.appendChild(tr);
+        const total = Number(tx.total) || 0;
+        const refunded = tx.status === "refunded";
+        if (!refunded) totalSales += total;
+        const row = document.createElement("tr");
+        row.style.borderBottom = "1px solid #edf2f7";
+        const values = ["#" + (tx.orderNumber || ""), String(tx.customerName || ""), Array.isArray(tx.items) ? tx.items.join(", ") : "", "₱" + total.toFixed(2), String(tx.timestamp || "")];
+        values.forEach((value, index) => {
+          const cell = document.createElement("td");
+          cell.textContent = value;
+          cell.style.padding = "10px";
+          if (index === 0) cell.style.fontWeight = "bold";
+          if (index === 3) { cell.style.fontWeight = "bold"; cell.style.color = "#2f855a"; }
+          if (index === 4) { cell.style.color = "#718096"; cell.style.fontSize = "12px"; }
+          row.appendChild(cell);
+        });
+        const actionCell = document.createElement("td");
+        actionCell.style.padding = "10px";
+        if (refunded) {
+          actionCell.textContent = "Refunded";
+          actionCell.style.color = "#718096";
+        } else {
+          const refundButton = document.createElement("button");
+          refundButton.className = "btn btn-reset";
+          refundButton.textContent = "Refund";
+          refundButton.addEventListener("click", () => refundTransaction(tx));
+          actionCell.appendChild(refundButton);
+        }
+        row.appendChild(actionCell);
+        tableBody.appendChild(row);
       });
-
-      totalSalesSpan.innerText = `₱${totalSales.toFixed(2)}`;
+      totalSalesSpan.textContent = "₱" + totalSales.toFixed(2);
     }
-
+    async function refundTransaction(tx) {
+      const orderLabel = "#" + (tx.orderNumber || "");
+      if (!confirm(`Refund order ${orderLabel} for ₱${(Number(tx.total) || 0).toFixed(2)}?\n\nThis will mark it refunded and remove it from this month’s revenue.`)) return;
+      try {
+        const response = await fetch('/api/transactions/refund', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transactionId: tx.transactionId, orderNumber: tx.orderNumber, timestamp: tx.timestamp })
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || 'Could not refund this transaction.');
+        renderAdminTransactions();
+        alert(`Order ${orderLabel} has been marked as refunded.`);
+      } catch (error) {
+        alert(error.message || 'Could not refund this transaction. Check the server connection and try again.');
+      }
+    }
     document.addEventListener('DOMContentLoaded', () => {
       handleNewCategoryChange();
       renderAdminTransactions();
     });
-        function accessDashboard() {
-  const passwordInput = document.getElementById('adminPassword').value;
-  
-  if (passwordInput === 'admin123') {
-    document.getElementById('loginContainer').style.display = 'none';
-    document.getElementById('adminDashboardContainer').style.display = 'block';
-    
-    renderAdminTransactions();
-  } else {
-    alert('Incorrect Password!');
-  }
-}
-
-function renderAdminTransactions() {
-  const transactions = JSON.parse(localStorage.getItem('dailyTransactions') || '[]');
-  const tableBody = document.getElementById('adminTransactionTable');
-  const totalSalesSpan = document.getElementById('adminTotalSales');
-
-  if (!tableBody || !totalSalesSpan) return;
-
-  tableBody.innerHTML = '';
-  let totalSales = 0;
-
-  if (transactions.length === 0) {
-    tableBody.innerHTML = `
-      <tr>
-        <td colspan="5" style="padding: 15px; text-align: center; color: #a0aec0; font-style: italic;">
-          No transactions logged yet today.
-        </td>
-      </tr>`;
-    totalSalesSpan.innerText = '₱0.00';
-    return;
-  }
-
-  transactions.forEach(tx => {
-    totalSales += tx.total;
-    const tr = document.createElement('tr');
-    tr.style.borderBottom = '1px solid #edf2f7';
-    tr.innerHTML = `
-      <td style="padding: 10px; font-weight: bold;">#${tx.orderNumber}</td>
-      <td style="padding: 10px;">${tx.customerName}</td>
-      <td style="padding: 10px;">${tx.items.join(', ')}</td>
-      <td style="padding: 10px; font-weight: bold; color: #2f855a;">₱${tx.total.toFixed(2)}</td>
-      <td style="padding: 10px; color: #718096; font-size: 12px;">${tx.timestamp}</td>
-    `;
-    tableBody.appendChild(tr);
-  });
-
-  totalSalesSpan.innerText = `₱${totalSales.toFixed(2)}`;
-}
   </script>
   <!-- html14: Numbered shared live-sync code keeps admin inventory, archive, and order logs in step. -->
   <script src="shared-sync.js"></script>
