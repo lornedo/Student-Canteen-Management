@@ -104,10 +104,12 @@
 
     .main-grid {
       display: grid;
-      grid-template-columns: 180px 1fr;
+      grid-template-columns: 180px minmax(0, 1fr);
       gap: 25px;
       align-items: start;
     }
+    .menu-column { min-width: 0; }
+    [hidden] { display: none !important; }
 
     .sidebar-card {
       background: #f7fafc;
@@ -154,10 +156,18 @@
 
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
       gap: 15px;
-      margin-bottom: 30px;
+      margin: 0 0 25px;
     }
+    .menu-controls { display: flex; gap: 10px; margin: 0 0 8px; }
+    .menu-controls input, .menu-controls select { min-width: 0; padding: 9px 10px; border: 1px solid var(--border-color); border-radius: 6px; background: #fff; color: var(--text-dark); font: inherit; }
+    .menu-controls input { flex: 1; }
+    .menu-sync-status { margin: 0 0 12px; color: #718096; font-size: 12px; }
+    .menu-empty-state { grid-column: 1 / -1; margin: 0; padding: 18px; color: #718096; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; }
+    .item-card[hidden] { display: none !important; }
+    @media (max-width: 760px) { .main-grid { grid-template-columns: 1fr; } .sidebar-card, .menu-column { grid-column: 1; } }
+    @media (max-width: 520px) { .menu-controls { flex-direction: column; } }
 
     .item-card {
       background: var(--card-bg);
@@ -168,10 +178,15 @@
       flex-direction: column;
       box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
-    .item-card img {
+    .item-card > img {
+      display: block;
+      box-sizing: border-box;
       width: 100%;
-      height: 120px;
-      object-fit: cover;
+      height: 160px;
+      padding: 10px;
+      object-fit: contain;
+      object-position: center;
+      background: #ffffff;
     }
     .item-details {
       padding: 12px;
@@ -222,9 +237,11 @@
       background: #000;
     }
     .btn-disabled {
-      background: #cbd5e0 !important;
+      background: transparent !important;
       color: #718096 !important;
+      border: 1px dashed #cbd5e0 !important;
       cursor: not-allowed !important;
+      opacity: 0.8;
     }
 
     .tray-card {
@@ -350,9 +367,23 @@
         <button class="filter-btn" onclick="filterCategory('Rice Meal', this)">🍳 Rice Meal</button>
         <button class="filter-btn" onclick="filterCategory('Beverages', this)">🥤 Beverages</button>
       </div>
+      <div class="menu-column">
+        <div class="section-heading">Available Today</div>
+        <div class="menu-controls">
+          <input id="menuSearch" type="search" aria-label="Search menu" placeholder="Search food and beverages" oninput="applyMenuControls()">
+          <select id="menuSort" aria-label="Sort menu" onchange="applyMenuControls()">
+            <option value="name-asc">Name (A–Z)</option>
+            <option value="name-desc">Name (Z–A)</option>
+            <option value="price-asc">Price (low to high)</option>
+            <option value="price-desc">Price (high to low)</option>
+            <option value="expiry-asc">Expiry (soonest first)</option>
+          </select>
+        </div>
+        <p id="menuSyncStatus" class="menu-sync-status">Connecting to shared inventory…</p>
+        <div class="menu-grid" id="menuGrid"></div>
+
         <div class="tray-card">
-          <div class="tray-title">🛒 Your Order Tray (Numbering System)</div>
-          
+          <div class="tray-title">🛒 Your Order Tray</div>
           <div id="trayContainer">
             <p class="empty-tray-text" id="emptyTrayMsg">Your order tray is currently empty.</p>
             <table class="tray-table" id="trayTable" style="display: none;">
@@ -368,23 +399,20 @@
               <tbody id="trayBody"></tbody>
             </table>
           </div>
-
           <div class="tray-total-row">
             <span>Total Amount:</span>
             <span id="totalAmount">₱0.00</span>
           </div>
-
           <div class="input-group">
-            <label>Student Name:</label>
-            <input type="text" id="studentName" placeholder="Enter Fullname">
+            <label for="studentName">Student Name:</label>
+            <input type="text" id="studentName" placeholder="Enter Fullname" maxlength="80">
           </div>
-
-          <button class="btn-checkout" onclick="checkoutOrder()">Checkout & Generate Order Number</button>
+          <button class="btn-checkout" onclick="checkoutOrder()">Checkout &amp; Generate Order Number</button>
         </div>
       </div>
     </div>
   </div>
-
+  <script src="inventory-utils.js"></script>
   <script>
     let tray = [];
 
@@ -420,7 +448,7 @@
         expiryDate.setHours(0, 0, 0, 0);
 
         const cat = card.getAttribute('data-category');
-        const unit = cat === 'Beverages' ? 'bottles' : 'servings';
+        const unit = card.dataset.unit || 'pieces';
         if (stock <= 20) {
           lowStockItems.push(`${name} (${stock} ${unit} remaining)`);
         }
@@ -448,21 +476,35 @@
     }
     evaluateAlerts();
 
-    // js3: Filter the menu by item category.
-    function filterCategory(cat, btn) {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      const cards = document.querySelectorAll('.item-card');
-      cards.forEach(card => {
-        if (cat === 'All' || card.getAttribute('data-category') === cat) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
-      });
+    // js3: Search, filter, and sort live menu cards from shared inventory.
+    function filterCategory(category, button) {
+      window.selectedMenuCategory = category;
+      document.querySelectorAll('.filter-btn').forEach(filter => filter.classList.remove('active'));
+      if (button) button.classList.add('active');
+      applyMenuControls();
     }
 
+    function applyMenuControls() {
+      const grid = document.getElementById('menuGrid');
+      if (!grid || !window.CanteenUtils) return;
+      const query = document.getElementById('menuSearch')?.value || '';
+      const sort = document.getElementById('menuSort')?.value || 'name-asc';
+      const category = window.selectedMenuCategory || 'All';
+      const cards = [...grid.querySelectorAll('.item-card')];
+      const records = cards.map(card => ({
+        card,
+        name: card.dataset.name || '',
+        intendedUse: card.querySelector('.item-stock')?.textContent || '',
+        category: card.dataset.category || '',
+        price: Number(card.dataset.price) || 0,
+        stock: Number(card.dataset.stock) || 0,
+        expiry: card.dataset.expiry || ''
+      }));
+      const visible = window.CanteenUtils.filterAndSort(records, { query, category, sort });
+      const visibleCards = new Set(visible.map(record => record.card));
+      cards.forEach(card => { card.hidden = !visibleCards.has(card); });
+      visible.forEach(record => grid.appendChild(record.card));
+    }
     // js4: Add available menu items to the order tray.
     function addToTray(id) {
       const card = document.querySelector(`.item-card[data-id="${id}"]`);
